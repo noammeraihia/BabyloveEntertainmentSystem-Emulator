@@ -12,4 +12,4 @@ file(GLOB BES_src
 )
 
 add_executable(Babylove-Entertainment-System ${BES_src})
-target_include_directories(Babylove-Entertainment-System PRIVATE include/)
+target_include_directories(Babylove-Entertainment-System PRIVATE ${CMAKE_SOURCE_DIR}/src/)
