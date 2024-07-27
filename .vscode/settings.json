@@ -1,0 +1,8 @@
+{
+  "files.associations": {
+    "bes_6502cpu_instructions.h": "c",
+    "bes_6502cpu.h": "c",
+    "bes_6502cpu_common.h": "c",
+    "bes_app.h": "c"
+  }
+}

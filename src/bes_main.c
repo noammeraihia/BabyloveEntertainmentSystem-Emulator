@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "CPU/bes_6502cpu.h"
+#include "core/CPU/bes_6502cpu.h"
+#include "app/bes_app.h"
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-    printf("Hello BES !\n");
+    bes_appInit();
 
     bes6502CPU_t CPU = bes6502CPU_create();
     besBus_t bus = besBus_create(&CPU);

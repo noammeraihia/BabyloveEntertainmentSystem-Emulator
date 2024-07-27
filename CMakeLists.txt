@@ -5,11 +5,10 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
-file(GLOB BES_src
-     "src/*.c"
-     "src/*/*.c"
-     "src/*/*/*.c"
-)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/core)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/app)
 
-add_executable(Babylove-Entertainment-System ${BES_src})
-target_include_directories(Babylove-Entertainment-System PRIVATE ${CMAKE_SOURCE_DIR}/src/)
+add_executable(Babylove-Entertainment-System ${CMAKE_SOURCE_DIR}/src/bes_main.c)
+
+target_include_directories(Babylove-Entertainment-System PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(Babylove-Entertainment-System PRIVATE BES-Core BES-App)
