@@ -13,7 +13,7 @@ bes6502CPU_t bes6502CPU_create()
         .PC = 0x0000,
         .PS = 0x00,
 
-        .fetchedData = 0x00,
+        .fetchedData = 0x00, 
         .addressAbsolute = 0x0000,
         .addressRelative = 0x0000,
         .opcode = 0x00,
@@ -70,26 +70,87 @@ void bes6502CPU_clock(bes6502CPU_t* __handle)
         __handle->opcode = bes6502CPU_read(__handle, __handle->PC);
         __handle->PC++;
 
-        __handle->cycles = instructionTable[__handle->opcode].cycles;
-        uint8_t additionalCycle1 = (*instructionTable[__handle->opcode].addressMode)(__handle);
-        uint8_t additionalCycle2 = (*instructionTable[__handle->opcode].operate)(__handle); 
+        __handle->cycles = __handle->instructionTable[__handle->opcode].cycles;
+        uint8_t additionalCycle1 = (*__handle->instructionTable[__handle->opcode].addressMode)(__handle);
+        uint8_t additionalCycle2 = (*__handle->instructionTable[__handle->opcode].operate)(__handle); 
 
-        __handle->cycles += (additionalCycle1 & additionalCycle2)
+        __handle->cycles += (additionalCycle1 & additionalCycle2);
     }
 
-    cycles--;
+    __handle->cycles--;
 }
 
-void bes6502CPU_reset(bes6502CPU_t* __handle);
-void bes6502CPU_irq(bes6502CPU_t* __handle);
-void bes6502CPU_nmi(bes6502CPU_t* __handle);
+void bes6502CPU_reset(bes6502CPU_t* __handle)
+{
+    __handle->A = 0x00;
+    __handle->X = 0x00;
+    __handle->Y = 0x00;
+    __handle->SP = 0xFD;
+    __handle->PS = 0x00;
+
+    __handle->addressAbsolute = BES_RESET_VECTOR_LOCATION;
+    besBYTE_t low = bes6502CPU_read(__handle, __handle->addressAbsolute + 0);
+    besBYTE_t high = bes6502CPU_read(__handle, __handle->addressAbsolute + 1);
+
+    __handle->PC = (high << 8) | low;
+
+    __handle->addressAbsolute = 0x0000;
+    __handle->addressRelative = 0x0000;
+
+    __handle->fetchedData = 0x00;
+
+    __handle->cycles = 8;
+}
+
+void bes6502CPU_irq(bes6502CPU_t* __handle)
+{
+    if (!__handle->PSif.I)
+    {
+        bes6502CPU_write(__handle, BES_STACK_BASE_LOCATION + __handle->SP, (__handle->PC >> 8) & 0xFF);
+        __handle->SP--;
+        bes6502CPU_write(__handle, BES_STACK_BASE_LOCATION + __handle->SP, __handle->PC & 0xFF);
+        __handle->SP--;
+
+        __handle->PSif.B = 0;
+        __handle->PSif.u = 1;
+        __handle->PSif.I = 1;
+        bes6502CPU_write(__handle, BES_STACK_BASE_LOCATION + __handle->SP, __handle->PS);
+        __handle->SP--;
+
+        __handle->addressAbsolute = 0xFFFE;
+        besBYTE_t low = bes6502CPU_read(__handle, __handle->addressAbsolute + 0);
+        besBYTE_t high = bes6502CPU_read(__handle, __handle->addressAbsolute + 1);
+        __handle->PC = (high << 8) | low;
+
+        __handle->cycles = 7;
+    }
+}
+
+void bes6502CPU_nmi(bes6502CPU_t* __handle)
+{
+    bes6502CPU_write(__handle, BES_STACK_BASE_LOCATION + __handle->SP, (__handle->PC >> 8) & 0xFF);
+    __handle->SP--;
+    bes6502CPU_write(__handle, BES_STACK_BASE_LOCATION + __handle->SP, __handle->PC & 0xFF);
+    __handle->SP--;
+
+    __handle->PSif.B = 0;
+    __handle->PSif.u = 1;
+    __handle->PSif.I = 1;
+    bes6502CPU_write(__handle, BES_STACK_BASE_LOCATION + __handle->SP, __handle->PS);
+    __handle->SP--;
+
+    __handle->addressAbsolute = 0xFFFA;
+    besBYTE_t low = bes6502CPU_read(__handle, __handle->addressAbsolute + 0);
+    besBYTE_t high = bes6502CPU_read(__handle, __handle->addressAbsolute + 1);
+    __handle->PC = (high << 8) | low;
+
+    __handle->cycles = 8;
+}
 
 void bes6502CPU_fetch(bes6502CPU_t* __handle)
 {
     if (!(__handle->instructionTable[__handle->opcode].addressMode == &bes6502CPU_IMP))
-        __handle->fetchedData = bes6502CPU_read(__handle->addressAbsolute);
-
-    return __handle->fetchedData;
+        __handle->fetchedData = bes6502CPU_read(__handle, __handle->addressAbsolute);
 }
 
 /* BES BUS funcs */

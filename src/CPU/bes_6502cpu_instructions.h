@@ -2,16 +2,7 @@
 #define BES_6502CPU_INSTRUCTIONS_h
 
 #include "bes_types.h"
-
-typedef struct s_bes6502CPU bes6502CPU_t;
-typedef struct s_besCPUInstruction besCPUInstruction_t; 
-
-struct s_besCPUInstruction {
-    const char* name;
-    besBYTE_t (*operate)(bes6502CPU_t*);
-    besBYTE_t (*addressMode)(bes6502CPU_t*);
-    uint8_t cycles;
-};
+#include "CPU/bes_6502cpu_common.h"
 
 // addressing modes
 besBYTE_t bes6502CPU_IMP(bes6502CPU_t* __handle);  besBYTE_t bes6502CPU_IMM(bes6502CPU_t* __handle);
