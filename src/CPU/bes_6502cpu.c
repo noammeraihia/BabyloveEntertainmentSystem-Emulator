@@ -63,6 +63,35 @@ uint8_t bes6502CPU_write(bes6502CPU_t* __handle, besWORD_t __address, besBYTE_t 
     return besBus_write(__handle->bus, __address, __data);
 }
 
+void bes6502CPU_clock(bes6502CPU_t* __handle)
+{
+    if (__handle->cycles == 0)
+    {
+        __handle->opcode = bes6502CPU_read(__handle, __handle->PC);
+        __handle->PC++;
+
+        __handle->cycles = instructionTable[__handle->opcode].cycles;
+        uint8_t additionalCycle1 = (*instructionTable[__handle->opcode].addressMode)(__handle);
+        uint8_t additionalCycle2 = (*instructionTable[__handle->opcode].operate)(__handle); 
+
+        __handle->cycles += (additionalCycle1 & additionalCycle2)
+    }
+
+    cycles--;
+}
+
+void bes6502CPU_reset(bes6502CPU_t* __handle);
+void bes6502CPU_irq(bes6502CPU_t* __handle);
+void bes6502CPU_nmi(bes6502CPU_t* __handle);
+
+void bes6502CPU_fetch(bes6502CPU_t* __handle)
+{
+    if (!(__handle->instructionTable[__handle->opcode].addressMode == &bes6502CPU_IMP))
+        __handle->fetchedData = bes6502CPU_read(__handle->addressAbsolute);
+
+    return __handle->fetchedData;
+}
+
 /* BES BUS funcs */
 
 besBus_t besBus_create(bes6502CPU_t* __cpu) 
