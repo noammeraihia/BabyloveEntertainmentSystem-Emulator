@@ -1,5 +1,5 @@
 #ifndef BES_TYPES_h
-#define BES_TYPES_hù
+#define BES_TYPES_h
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -9,7 +9,5 @@
 
 typedef uint8_t besBYTE_t;
 typedef uint16_t besWORD_t;
-
-
 
 #endif
