@@ -6,3 +6,4 @@ file(GLOB BESCORE_src
 
 add_library(BES-Core ${BESCORE_src})
 target_include_directories(BES-Core PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_link_libraries(BES-Core PRIVATE logger)

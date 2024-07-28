@@ -5,6 +5,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
+add_subdirectory(${CMAKE_SOURCE_DIR}/thirdparty/SDL EXCLUDE_FROM_ALL)
+add_subdirectory(thirdparty/c-logger)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/core)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/app)
 
