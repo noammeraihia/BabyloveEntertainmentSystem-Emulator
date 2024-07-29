@@ -9,6 +9,11 @@
     "d3d11_1.h": "c",
     "dxgi1_4.h": "c",
     "sdl_windowswindow.h": "c",
-    "sdl_main.h": "c"
-  },
+    "sdl_main.h": "c",
+    "bes_types.h": "c",
+    "chrono": "c",
+    "logger.h": "c",
+    "ratio": "c",
+    "bes_window.h": "c"
+  }
 }

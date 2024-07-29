@@ -9,5 +9,6 @@
 
 typedef uint8_t besBYTE_t;
 typedef uint16_t besWORD_t;
+typedef uint32_t besDWORD_t;
 
 #endif
