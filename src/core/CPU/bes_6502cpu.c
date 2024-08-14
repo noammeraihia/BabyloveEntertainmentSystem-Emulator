@@ -292,29 +292,57 @@ uint8_t bes6502CPU_write(bes6502CPU_t *__handle, besWORD_t __address, besBYTE_t 
     return besBus_write(&__handle->bus, __address, __data);
 }
 
+void bes6502CPU_crenderinfo(bes6502CPU_t *__handle)
+{
+    __handle->opcode = bes6502CPU_read(__handle, __handle->PC);
+    printf("Current instruction Name => %s\n", __handle->instructionTable[__handle->opcode].name);
+    printf("Current instruction OpCode => %x\n", __handle->opcode);
+    printf("Current instruction Cycles => %d\n", __handle->instructionTable[__handle->opcode].cycles);
+    printf("Current location => %x\n", __handle->PC);
+
+    printf("A => %x\n", __handle->A);
+    printf("X => %x\n", __handle->X);
+    printf("Y => %x\n\n", __handle->Y);
+
+    printf("C => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_C));
+    printf("Z => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_Z));
+    printf("I => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_I));
+    printf("D => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_D));
+    printf("B => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_B));
+    printf("U => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_U));
+    printf("V => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_V));
+    printf("N => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_N));
+}
+
+void bes6502CPU_crendermem(bes6502CPU_t *__handle, besWORD_t __startingAddress, besWORD_t __endingAddress, besWORD_t __chunksSize)
+{
+    besWORD_t _chunksCount = ((__endingAddress - __startingAddress) / __chunksSize) + 1;
+    besWORD_t _currentChunksCount = _chunksCount;
+    besWORD_t _currentStartingAddr = __startingAddress;
+    besWORD_t _currentEndingAddr = _currentStartingAddr + __chunksSize;
+
+    printf("\nFrom @%x to @%x\n", __startingAddress, __endingAddress);
+    while (_currentChunksCount > 0)
+    {
+        _currentStartingAddr = _currentStartingAddr + ((_chunksCount - _currentChunksCount) * __chunksSize);
+        _currentEndingAddr = _currentStartingAddr + __chunksSize;
+
+        printf("[ @%x ] ", _currentStartingAddr);
+        for (besWORD_t addr = _currentStartingAddr; addr < _currentEndingAddr; addr++)
+        {
+            printf("| %x ", bes6502CPU_read(__handle, addr));
+        }
+        printf("|\n");
+
+        _currentChunksCount--;
+    }
+}
+
 void bes6502CPU_clock(bes6502CPU_t *__handle)
 {
     if (__handle->cycles == 0)
     {
         __handle->opcode = bes6502CPU_read(__handle, __handle->PC);
-        // printf("Current instruction Name => %s\n", __handle->instructionTable[__handle->opcode].name);
-        // printf("Current instruction OpCode => %x\n", __handle->opcode);
-        // printf("Current instruction Cycles => %d\n", __handle->instructionTable[__handle->opcode].cycles);
-        // printf("Current location => %x\n", __handle->PC);
-
-        // printf("A => %x\n", __handle->A);
-        // printf("X => %x\n", __handle->X);
-        // printf("Y => %x\n", __handle->Y);
-
-        // printf("C => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_C));
-        // printf("Z => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_Z));
-        // printf("I => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_I));
-        // printf("D => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_D));
-        // printf("B => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_B));
-        // printf("U => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_U));
-        // printf("V => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_V));
-        // printf("N => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_N));
-
         __handle->PC++;
 
         __handle->cycles = __handle->instructionTable[__handle->opcode].cycles;

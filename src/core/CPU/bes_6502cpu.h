@@ -16,6 +16,8 @@ uint8_t bes6502CPU_write(bes6502CPU_t *__handle, besWORD_t __address, besBYTE_t 
 
 // other CPU funcs
 
+void bes6502CPU_crenderinfo(bes6502CPU_t *__handle);
+void bes6502CPU_crendermem(bes6502CPU_t *__handle, besWORD_t __startingAddress, besWORD_t __endingAddress, besWORD_t __chunksSize);
 void bes6502CPU_clock(bes6502CPU_t *__handle);
 void bes6502CPU_reset(bes6502CPU_t *__handle);
 void bes6502CPU_irq(bes6502CPU_t *__handle);

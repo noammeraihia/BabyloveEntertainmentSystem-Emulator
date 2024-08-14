@@ -9,7 +9,9 @@ besAppWindow_t besCreateAppWindow(const char *__name, int __width, int __height,
         .isCOShown = true,
 
         .handle = NULL,
-        .renderer = NULL};
+        .renderer = NULL,
+        .fps = 60,
+        .frameDelay = 1000 / 60};
 
     _handle.handle = SDL_CreateWindow(__name, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, __width, __height, __wF);
     if (!_handle.handle)
@@ -82,6 +84,7 @@ int besAppWindowPollEvent(besAppWindow_t *__window)
 
 void besAppWindowBeginFrame(besAppWindow_t *__window)
 {
+    __window->frameStart = SDL_GetTicks();
     SDL_SetRenderDrawColor(__window->renderer, 0, 0, 25, 255);
     SDL_RenderClear(__window->renderer);
 }
@@ -91,6 +94,12 @@ void besAppWindowEndFrame(besAppWindow_t *__window)
     besUpdateAppFramebuffer(&__window->coreOutput);
     besRenderAppFramebuffer(__window, &__window->coreOutput);
     SDL_RenderPresent(__window->renderer);
+    __window->frameTime = SDL_GetTicks() - __window->frameStart;
+
+    if (__window->frameDelay > __window->frameTime)
+    {
+        SDL_Delay(__window->frameDelay - __window->frameTime);
+    }
 }
 
 void besRenderPixelToAppFramebuffer(besAppFramebuffer_t *__framebuffer, int __x, int __y, besBYTE_t __r, besBYTE_t __g, besBYTE_t __b, besBYTE_t __a)

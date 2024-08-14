@@ -29,6 +29,12 @@ struct s_besAppWindow
 
     SDL_Event event;
 
+    int fps;
+    int frameDelay;
+
+    int frameStart;
+    int frameTime;
+
     besAppFramebuffer_t coreOutput;
     bool isCOShown;
 };
