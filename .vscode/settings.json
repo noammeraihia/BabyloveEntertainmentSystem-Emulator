@@ -14,6 +14,7 @@
     "chrono": "c",
     "logger.h": "c",
     "ratio": "c",
-    "bes_window.h": "c"
+    "bes_window.h": "c",
+    "windows.h": "c"
   }
 }

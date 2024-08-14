@@ -417,10 +417,10 @@ besBYTE_t bes6502CPU_DEX(bes6502CPU_t *__handle)
 
 besBYTE_t bes6502CPU_DEY(bes6502CPU_t *__handle)
 {
-    __handle->X--;
+    __handle->Y--;
 
-    bes6502CPU_setFlag(__handle, BES_6502_PSF_Z, (__handle->X == 0x0000));
-    bes6502CPU_setFlag(__handle, BES_6502_PSF_N, (__handle->X & 0x80));
+    bes6502CPU_setFlag(__handle, BES_6502_PSF_Z, (__handle->Y == 0x0000));
+    bes6502CPU_setFlag(__handle, BES_6502_PSF_N, (__handle->Y & 0x80));
 
     return 0x00;
 }

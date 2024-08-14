@@ -29,6 +29,11 @@ enum e_bes6502PSFlags
 besBYTE_t bes6502CPU_getFlag(bes6502CPU_t *__handle, bes6502PSFlags_t __flag);
 void bes6502CPU_setFlag(bes6502CPU_t *__handle, bes6502PSFlags_t __flag, besWORD_t __value);
 
+struct s_besBus
+{
+    besBYTE_t ram[BES_6502CPU_MAX_ADDR_MEM];
+};
+
 struct s_besCPUInstruction
 {
     const char *name;
@@ -39,7 +44,7 @@ struct s_besCPUInstruction
 
 struct s_bes6502CPU
 {
-    besBus_t *bus;
+    besBus_t bus;
 
     besBYTE_t A, X, Y, SP; // accumulator, index X reg, index Y reg, stack pointer reg
     besWORD_t PC;          // program counter reg
@@ -55,12 +60,6 @@ struct s_bes6502CPU
     uint8_t cycles;
 
     besCPUInstruction_t instructionTable[BES_6502CPU_INSTRUCTIONS_TABLE_COUNT];
-};
-
-struct s_besBus
-{
-    bes6502CPU_t *cpu;
-    besBYTE_t ram[BES_6502CPU_MAX_ADDR_MEM];
 };
 
 #endif

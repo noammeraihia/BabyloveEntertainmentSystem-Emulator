@@ -5,7 +5,7 @@
 bes6502CPU_t bes6502CPU_create()
 {
     bes6502CPU_t _cpu = {
-        .bus = NULL,
+        .bus = {0},
         .A = 0x00,
         .X = 0x00,
         .Y = 0x00,
@@ -277,29 +277,19 @@ bes6502CPU_t bes6502CPU_create()
             {"???", &bes6502CPU_XXX, &bes6502CPU_IMP, 7},
         }};
 
+    _cpu.bus = besBus_create();
+
     return _cpu;
-}
-
-uint8_t bes6502CPU_connectBus(bes6502CPU_t *__handle, besBus_t *__bus)
-{
-    if (__bus)
-    {
-        __handle->bus = __bus;
-
-        return BES_U8SUCCESS;
-    }
-
-    return BES_U8FAILURE;
 }
 
 besBYTE_t bes6502CPU_read(bes6502CPU_t *__handle, besWORD_t __address)
 {
-    return besBus_read(__handle->bus, __address, 0);
+    return besBus_read(&__handle->bus, __address, 0);
 }
 
 uint8_t bes6502CPU_write(bes6502CPU_t *__handle, besWORD_t __address, besBYTE_t __data)
 {
-    return besBus_write(__handle->bus, __address, __data);
+    return besBus_write(&__handle->bus, __address, __data);
 }
 
 void bes6502CPU_clock(bes6502CPU_t *__handle)
@@ -307,6 +297,24 @@ void bes6502CPU_clock(bes6502CPU_t *__handle)
     if (__handle->cycles == 0)
     {
         __handle->opcode = bes6502CPU_read(__handle, __handle->PC);
+        // printf("Current instruction Name => %s\n", __handle->instructionTable[__handle->opcode].name);
+        // printf("Current instruction OpCode => %x\n", __handle->opcode);
+        // printf("Current instruction Cycles => %d\n", __handle->instructionTable[__handle->opcode].cycles);
+        // printf("Current location => %x\n", __handle->PC);
+
+        // printf("A => %x\n", __handle->A);
+        // printf("X => %x\n", __handle->X);
+        // printf("Y => %x\n", __handle->Y);
+
+        // printf("C => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_C));
+        // printf("Z => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_Z));
+        // printf("I => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_I));
+        // printf("D => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_D));
+        // printf("B => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_B));
+        // printf("U => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_U));
+        // printf("V => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_V));
+        // printf("N => %d\n", bes6502CPU_getFlag(__handle, BES_6502_PSF_N));
+
         __handle->PC++;
 
         __handle->cycles = __handle->instructionTable[__handle->opcode].cycles;
@@ -394,10 +402,9 @@ void bes6502CPU_fetch(bes6502CPU_t *__handle)
 
 /* BES BUS funcs */
 
-besBus_t besBus_create(bes6502CPU_t *__cpu)
+besBus_t besBus_create()
 {
-    besBus_t _bus = {.cpu = __cpu, .ram = {0x00}};
-    bes6502CPU_connectBus(_bus.cpu, &_bus);
+    besBus_t _bus = {.ram = {[0 ... BES_6502CPU_MAX_ADDR_MEM - 1] = (besBYTE_t)0x00}};
 
     return _bus;
 }

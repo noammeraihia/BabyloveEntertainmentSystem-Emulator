@@ -12,7 +12,7 @@ typedef struct s_besBinFile besBinFile_t;
 
 struct s_besBinFile
 {
-    besBYTE_t *bytes;
+    besBYTE_t bytes[BES_BINFILE_MAX_SIZE];
     long fileSize;
 };
 

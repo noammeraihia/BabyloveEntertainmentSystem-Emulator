@@ -23,7 +23,7 @@ void bes6502CPU_nmi(bes6502CPU_t *__handle);
 
 void bes6502CPU_fetch(bes6502CPU_t *__handle);
 
-besBus_t besBus_create(bes6502CPU_t *__cpu);
+besBus_t besBus_create();
 
 uint8_t besBus_write(besBus_t *__handle, besWORD_t __address, besBYTE_t __data);
 besBYTE_t besBus_read(besBus_t *__handle, besWORD_t __address, bool __readOnly);
